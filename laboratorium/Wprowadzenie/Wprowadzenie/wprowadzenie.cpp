@@ -1,6 +1,9 @@
 #include <iostream>
+using namespace std;
+
 int main(int argc, char** argv)
 {
-	std::cout <<"Hello ppk";
+	cout <<"Hello ppk"<<endl;
+	cout << "Test w domu"<<endl;
 	return 0;
 }
