@@ -26,6 +26,9 @@ int main(int argc, char**argv)
 		cout << "Uklad ma jedno rozwiazanie: \n";
 		x = wx / w;
 		y = wy / w;
+
+		cout << "Wzor na x=(c1*b2 - b1*c2) / (a1*b2 - b1*a2)" << endl;
+		cout << "Wzor na y=(a1*c2 - c1*a2) / (a1*b2 - b1*a2)" << endl;
 		cout << "x=" << x << endl;
 		cout << "y=" << y << endl;
 	}
