@@ -336,8 +336,8 @@ int main(int argc, char**argv)
 	*/
 
 	//ZAD10, czy slowo jest palindromem
-	string slowo;
-	/*int dl;
+	/*string slowo;
+	int dl;
 
 	cout << "podaj slowo: " << endl;
 	cin >> slowo;
