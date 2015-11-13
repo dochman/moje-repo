@@ -64,7 +64,7 @@ void wyswtablica(int* tablica, int rozmiar)
 }
 
 //ZAD4, funkcja podnoszaca liczbe double do potegi naturalnej
-double potega(double podstawa, unsigned int wykladnik)
+double potega(double podstawa, int wykladnik)
 {
 	double wynik=1;
 	for (int i = 0;i < wykladnik;i++)
@@ -79,6 +79,66 @@ double odleglosc(double x1, double y1, double x2, double y2)
 {
 	return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
 }
+
+
+
+//ZAD6, rozwiazanie ukladu rownan z dwoma niewiadomymi
+void ukladrownan(double a1, double b1, double c1, double a2, double b2, double c2)
+{
+	double x, y, W, Wx, Wy;
+	W = a1*b2 - b1*a2;
+	Wx = c1*b2 - b1*c2;
+	Wy = a1*c2 - c1*a2;
+
+	if (W != 0)
+	{
+		x = Wx / W;
+		y = Wy / W;
+		cout << "Rownanie ma dwa jedno rozwiazanie: x= " << x << " i y= " << y << endl;
+	}
+	
+	if ((W == 0) && (Wx == 0) && (Wy == 0))
+	{
+		cout << "Uklad nieoznaczony" << endl;
+	}
+	else if ((W == 0) && (Wx != 0 || Wy != 0))
+	{
+		cout << "Uklad sprzeczny" << endl;
+	}
+}
+
+//ZAD7, ciag fibonacciego rekurencyjnie i iteracyjnie
+int fibrek(int n)
+{
+	if (n<=2) return 1;
+	return fibrek(n - 1) + fibrek(n - 2);
+}
+
+int fibint(int n)
+{
+	int F1 = 0;
+	int F2 = 1;
+
+	for (int i = 0;i < n-1;i++)
+	{
+		F2 = F2 + F1;
+		F1 = F2-F1;
+	}
+	return F2;
+}
+
+
+//ZAD8, wyswietlenie tablicy od tylu bez uzycia petli
+void wyswtablica2(int* tablica, int rozmiar)
+{
+	if (rozmiar > 0)
+	{
+		cout << tablica[rozmiar-1] << " ";
+		wyswtablica2(tablica, rozmiar -1);
+	}
+}
+
+
 
 int main()
 {
@@ -98,10 +158,18 @@ int main()
 	
 	cout << "3. Wypelnienie tablicy losowymi wartosciami i jej wyswietlenie: " << endl;
 	int tab[100];
-	lostablica(tab, 100);
-	wyswtablica(tab, 100);
+	lostablica(tab, 10);
+	wyswtablica(tab, 10);
 
 	cout << "4. Podniesienie double do podanej potegi: " << potega(4, 2) << endl;
 	cout << "5. Odleglosc miedzy dwoma punktami w przestrzeni euklidesowej: " << odleglosc(0, 0, 1, 1) << endl;
+	cout << "6. Rozwiazanie ukladu rownan z dwoma niewiadomymi: "<< endl;
+	ukladrownan(5,-4,8,4,2,22);
+	cout << "7a. Ciag fibonacciego rekurencyjnie (wyraz jedenasty): " << fibrek(11) << endl;
+	cout << "7b. Ciag fibonacciego iteracyjnie (wyraz jedenasty): " << fibint(11) << endl;
+	cout << "8. Wyswietlenie zawartosci tablicy od tylu: " << endl;
+	wyswtablica2(tab, 10);
+	cout << endl;
+
 	return 0;
 }
