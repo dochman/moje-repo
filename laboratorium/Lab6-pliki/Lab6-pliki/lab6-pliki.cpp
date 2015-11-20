@@ -139,6 +139,7 @@ void calculate_statistics(const string& input_file_name, const string& output_fi
 		suma += liczba;
 		srednia = suma / licznik;
 	}
+	cout << endl;
 	odczyt.close();
 
 	ofstream zapis(output_file_name, ios::app);
@@ -148,10 +149,68 @@ void calculate_statistics(const string& input_file_name, const string& output_fi
 		exit(1);
 	}
 
-	zapis << srednia;
+	zapis << srednia<<" ";
 	zapis.close();
 
 	return;
+}
+
+
+
+//ZAD3a, kopiowanie zawartosci input_file do output_file w trybie tekstowym
+void copy_text(const string& input_file_name1, const string& output_file_name1)
+{
+	ifstream odc1(input_file_name1);
+	if (!odc1)
+	{
+		cout << "Nie mozna otworzyc " << input_file_name1;
+		exit(1);
+	}
+
+	ofstream zap1(output_file_name1, ios::out);
+	if (!zap1)
+	{
+		cout << "Nie mozna otworzyc " << output_file_name1;
+		exit(1);
+	}
+
+	string linia;
+
+	while (getline(odc1,linia))
+	{
+		zap1 << linia << endl;
+	}
+
+	odc1.close();
+	zap1.close();
+}
+
+//ZAD3b, kopiowanie zawartosci input_file do output_file w trybie binarnym
+void copy_binary(const string& input_file_name1, const string& output_file_name2)
+{
+	ifstream odc2(input_file_name1, ios::in | ios::binary);
+	if (!odc2)
+	{
+		cout << "Nie mozna otworzyc " << input_file_name1;
+		exit(1);
+	}
+
+	ofstream zap2(output_file_name2, ios::out | ios::binary);
+	if (!zap2)
+	{
+		cout << "Nie mozna otworzyc " << output_file_name2;
+		exit(1);
+	}
+
+	
+	const int i = 150;
+	
+	char tab[i];
+	odc2.read(tab, i);
+	zap2.write(tab, i);
+
+	odc2.close();
+	zap2.close();
 }
 
 
@@ -162,4 +221,9 @@ int main()
 	const string output_file_name = "D:\\srednia.txt";
 	cout << "Plik rozmiar.txt ma rozmiar = " << GetFileSize(file_name) << endl;
 	calculate_statistics(input_file_name, output_file_name);
+	const string input_file_name1 = "D:\\zrodlo.txt";
+	const string output_file_name1 = "D:\\kopiatekst.txt";
+	copy_text(input_file_name1, output_file_name1);
+	const string output_file_name2 = "D:\\kopiabinarna.txt";
+	copy_binary(input_file_name1, output_file_name2);
 }
