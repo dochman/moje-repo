@@ -66,14 +66,23 @@ using namespace std;
 
 void odczytosob(const string &file_name)
 	{
+		const int rozmiar = 5;
 
+		//Person* tab[rozmiar]; //zamieniam sobie typ przechowywanych danych na wskaznikowy], tablica normalna
+		Person** tab = new Person*[rozmiar];		//dynamiczna tablica, wskaznik na wskazniki tak jakby
 
-		Person* tab[5]; //zamieniam sobie typ przechowywanych danych na wskaznikowy
+		for (int i = 0; i < rozmiar;i++)
+		{
+			tab[i] = nullptr;
+		}
+		
 		ifstream plik(file_name, ios::in);
 		int i = 0;
 		int suma=0;
+		int suma1 = 0;
 		double sredni;
 		int licznik = 0;
+		int licznik1 = 0;
 
 		string imie; //deklaruje sobie dodatkowe zmienne
 		int wiek;
@@ -86,11 +95,38 @@ void odczytosob(const string &file_name)
 			suma += tab[licznik]->Wiek;
 
 			licznik += 1;
+
+		/*	if (licznik == rozmiar)
+			{
+				const int rozmiar1 = rozmiar + (rozmiar / 2);
+				Person** tab1 = new Person*[rozmiar1];
+				for (int i = 0; i < rozmiar; i++)
+				{
+					tab1[i] = new Person;
+					tab1[i]->Imie = tab[i]->Imie;
+					tab1[i]->Wiek = tab[i]->Wiek;
+
+					if (licznik1 >= rozmiar)
+					{
+						for (int i = licznik1; i < rozmiar1; i++)            //na bank zle
+						{
+							tab1[i]->Imie = imie;
+							tab1[i]->Wiek = wiek;
+						}
+					}
+					
+					suma1 += tab1[i]->Wiek;
+
+					licznik1 += 1;
+				}
+
+			}*/
+			
 		}
 		sredni = suma / licznik;
 
 		
-		for (i = 0; i < licznik;i++)
+		for (i = 0; i < licznik;i++)				// wypisywanie do konsoli osob ktorych wiek jest mniejszy od wieku sredniego
 		{
 			if (tab[i]->Wiek < sredni)
 			{
@@ -98,7 +134,12 @@ void odczytosob(const string &file_name)
 			}
 		}
 		
-		//for (i = 0;) //w petli pousuwac poszczegolne persony
+		for (i = 0; i < licznik; i++) //zwalniam pamiec po tablicy
+		{
+			delete tab[i];
+		}
+		delete[] tab;				//kasuje caly wskaznik
+
 
 		plik.close();
 
@@ -107,7 +148,7 @@ void odczytosob(const string &file_name)
 int main()
 {
 	string file_name = "D:\\osoby.txt";
-	cout << "Osoby ponizej sredniego wieku: " << endl;
+	cout << "Osoby ponizej wieku sredniego: "<< endl;
 	odczytosob(file_name);
 
 }
