@@ -10,7 +10,7 @@ struct ListElem
 	ListElem* next;
 };
 
-struct List        //w wielu miejscach nie trzeba gwiazdki
+/*struct List        //w wielu miejscach nie trzeba gwiazdki
 {
 	ListElem* head;
 	//int liczba_elementow;
@@ -46,16 +46,35 @@ void usun(List &glowa)
 		delete tmp;
 	}
 }
+*/
 
 
-/*
 
-NA WSKAZNIKACH
+//NA WSKAZNIKACH
 
 //AddFront(head, 5); <- funkcja dodawania na poczatek listy
 void AddFront(ListElem* &glowa, int wartosc)
 {
 	glowa = new ListElem{ wartosc, glowa};
+}
+
+void AddBack(ListElem* &glowa, int wartosc)
+{
+	ListElem* nast;
+	ListElem* ogon;
+
+	if (glowa == nullptr)
+	{
+		glowa = new ListElem{ wartosc, nullptr };
+	}
+
+
+	ListElem* tmp = glowa;
+	while (tmp -> next)  //dopoki istnieje nastepny element to idz dalej
+	{
+		tmp = tmp->next; 
+	}
+	tmp->next = new ListElem{ wartosc, nullptr }; //stworz nowy element na ktory wskazuje tmp, i ten nastepny bedzie wskazywal na null
 }
 
 void wyswietl(ListElem* &glowa)
@@ -65,9 +84,20 @@ void wyswietl(ListElem* &glowa)
 	//przegladanie listy
 	while (nast != nullptr)
 	{
-		cout << nast->val << endl;
+		cout << nast->val << " ";
 		nast = nast->next;
 	}
+	cout << endl;
+}
+
+void wyswietlodtylu(ListElem* &glowa)
+{
+	if (glowa!=nullptr)
+	{
+		wyswietlodtylu(glowa->next); //sprawdzam czy head jest nullem, jesli nie to ide do nastepnego elementu i zawezam obszar, potem znowu sprawdzam i tworze kolejny mniejszy obszar i jak juz jest nullem to wypisuje wartosc
+		cout << glowa->val << " ";		//do head wpisuje nastepne pole i jak dochodze do null to wyswietlam
+	}
+	
 }
 
 void usun(ListElem* &glowa)
@@ -81,34 +111,82 @@ void usun(ListElem* &glowa)
 		delete tmp;
 	}
 }
-*/
+
+bool szukaj(ListElem* &glowa, int szukana)
+{
+	ListElem* nast;
+	nast = glowa;
+	while (nast != nullptr)
+	{
+		if (nast->val == szukana) return true;
+			nast = nast->next;
+	}
+	return false;
+}
+
+int usunowartosci(ListElem* &glowa, int wartosc)
+{
+	ListElem* nast;
+	ListElem* tmp;
+	nast = glowa;
+	tmp = glowa->next;
+
+	int licznik = 0;
+
+	while (nast != nullptr)
+	{
+		if (nast->val == wartosc)
+		{
+			nast = tmp;
+			tmp = tmp->next;
+
+
+		}
+	}
+	return licznik;
+}
+
+//nastepne zadanie, napisac funkcje ktora dodaje do listy elementy w ten sposob ze sa one posortowane, na poczatku lista jest pusta, wiec tylko ta funkcja jest uzywana do dodawania
 
 int main()
 {
-	//ListElem* head = nullptr;
-	List lista{ nullptr };
+	ListElem* head = nullptr;
+	//List lista{ nullptr };
 
 	//head = new ListElem{ 5,nullptr };  //dodawanie pokolei
 	//head->next = new ListElem{ 6,nullptr };
 	//head->next->next = new ListElem{ 7,nullptr };
 
-	/*
-	na wskaznikach
+	
+	//na wskaznikach
 
-	AddFront(head, 5);
-	AddFront(head, 6);
-	AddFront(head, 7);
+	//for (int i = 0; i < 500;i++)    //bedzie przepelnienie stosu przy wyswietlaniu bo coraz wiecej elementow odkladamy na stos i wkoncu sie zapelni
+	//{
+	//	AddFront(head, i);
+	//}
+
+	AddFront(head, 1);
+	AddFront(head, 2);
+	AddFront(head, 3);
+	AddBack(head, 1);
 
 	wyswietl(head);
-	usun(head);
-	*/
+	wyswietlodtylu(head);
 
-	AddFront(lista, 5);
+	cout << endl;
+	if (szukaj(head, 2)) cout << "Jest szukany element" << endl;
+	else cout << "Nie ma szukanego elementu" << endl;
+
+	usunowartosci(head,2);
+	usun(head);
+	
+	//na strukturze Lists
+	/*AddFront(lista, 5);
 	AddFront(lista, 6);
 	AddFront(lista, 7);
 
 	wyswietl(lista);
-	usun(lista);
+	usun(lista);*/
 
 
 	/* notatki
