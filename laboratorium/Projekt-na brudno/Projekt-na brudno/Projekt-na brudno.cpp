@@ -8,9 +8,9 @@ using namespace std;
 struct MainNode
 {
 	string Etykieta;
-	//string Imie;
-	//string Nazwisko;
-	string Autor;
+	string Imie;
+	string Nazwisko;
+	//string Autor;
 	string Tytul;
 
 	MainNode *left, *right;
@@ -19,8 +19,8 @@ struct MainNode
 struct SubNode
 {
 	string Etykieta;
-	//string Imie;
-	//string Nazwisko;
+	string Imie;
+	string Nazwisko;
 	string Tytul;
 	int Numer;
 
@@ -72,32 +72,52 @@ void help()
 }
 
 
-void MainAddRecursive(MainNode*&root, string Etykieta, string Autor,string Tytul)
+void MainAddRecursive(MainNode*&root, string Etykieta, string Imie, string Nazwisko,string Tytul)
 {
 	if (!root)
-		root = new MainNode{ Etykieta, Autor,Tytul,nullptr,nullptr };
-	else if (Etykieta < root->Etykieta) MainAddRecursive(root->left, Etykieta, Autor, Tytul);
-	else MainAddRecursive(root->right, Etykieta, Autor, Tytul);
+		root = new MainNode{ Etykieta, Imie, Nazwisko, Tytul,nullptr,nullptr };
+	else if (Etykieta < root->Etykieta) MainAddRecursive(root->left, Etykieta, Imie, Nazwisko, Tytul);
+	else MainAddRecursive(root->right, Etykieta, Imie, Nazwisko, Tytul);
 }
 
-void DeleteMainTree(MainNode*&root) 
+void SubAddRecursive(SubNode*&subroot, string Etykieta, string Imie, string Nazwisko, string Tytul, int Numer)
+{
+	if (!subroot)
+		subroot = new SubNode{ Etykieta, Imie, Nazwisko, Tytul, 0, nullptr, nullptr};
+	else if (Nazwisko < subroot->Nazwisko) SubAddRecursive(subroot->left,Etykieta,Imie,Nazwisko,Tytul, Numer);
+	else SubAddRecursive(subroot->right, Etykieta,Imie,Nazwisko,Tytul, Numer);
+}
+
+/*void DeleteMainTree(MainNode*&root) 
 {
 	if (!root) return;
 	DeleteMainTree(root->left);  
 	DeleteMainTree(root->right); 
 	delete root;         
 	root = nullptr;   
+}*/
+
+
+void Przejdz(MainNode* root)
+{
+	if (!root) return;
+	Przejdz(root->left);
+	Przejdz(root->right);
+
+	return;
 }
 
 
-void CzytajOpisyBibliograficzne(const string& input_file_name, const string& input_file_name_2, const string& output_file_name)
+void CzytajPliki(const string& input_file_name, const string& input_file_name_2, const string& output_file_name)
 {
 	string Etykieta;
-	//string Imie;
-	//string Nazwisko;
+	string Imie;
+	string Nazwisko;
 	string Tytul;
 	string Autor;
 	string zbedna_linia;
+	string wyraz;
+	int dl;
 
 	ifstream OpisyBibliograficzne(input_file_name_2);
 	if (!OpisyBibliograficzne)
@@ -106,7 +126,16 @@ void CzytajOpisyBibliograficzne(const string& input_file_name, const string& inp
 		return;
 	}
 
+	ifstream Publikacja(input_file_name);
+	if (!Publikacja)
+	{
+		cout << "Nie mozna otworzyc pliku: " << input_file_name << "\n";
+		return;
+	}
+
+
 	MainNode* root = nullptr;
+	SubNode* subroot = nullptr;
 
 	while (!OpisyBibliograficzne.eof())
 	{
@@ -114,11 +143,30 @@ void CzytajOpisyBibliograficzne(const string& input_file_name, const string& inp
 		getline(OpisyBibliograficzne, Autor);
 		getline(OpisyBibliograficzne, Tytul);
 		getline(OpisyBibliograficzne, zbedna_linia);
-		MainAddRecursive(root, Etykieta, Autor,Tytul);
+
+		dl = Autor.length();
+		for (int i = 0; i < dl; i++)
+		{
+			if (Autor[i] == ' ')
+			{
+				Imie = Autor.substr(0, i);
+				Nazwisko = Autor.substr(i+1, dl);
+				break;
+			}
+		}
+		MainAddRecursive(root, Etykieta, Imie, Nazwisko,Tytul);
 	}
 
-
+	while (Publikacja >> wyraz)
+	{
+		if (wyraz[0] == '\\' && wyraz == "\\cite{" + root->Etykieta + "}")
+		{
+				SubAddRecursive(subroot, root->Etykieta, root->Imie, root->Nazwisko, root->Tytul, 0);
+		}
+	}
+	
 	OpisyBibliograficzne.close();
+	Publikacja.close();
 	return;
 }
 
@@ -133,12 +181,8 @@ int main(int argc, char**argv)
 		help();
 		return 1;
 	}
-	
-	//MainNode* root = nullptr;
 
-	CzytajOpisyBibliograficzne(input_file_name, input_file_name_2, output_file_name);
-
-
+	CzytajPliki(input_file_name, input_file_name_2, output_file_name);
 
 	//DeleteMainTree(root);
 
