@@ -98,6 +98,15 @@ void SubAddRecursive(SubNode*&subroot, string Etykieta, string Imie, string Nazw
 }*/
 
 
+void NadajNumery(SubNode* subroot)
+{
+	if (!subroot) return;
+	NadajNumery(subroot->left);
+	subroot->Numer++;
+	NadajNumery(subroot->right);
+	return;
+}
+
 void Przejdz(MainNode* root)
 {
 	if (!root) return;
@@ -106,7 +115,6 @@ void Przejdz(MainNode* root)
 
 	return;
 }
-
 
 void CzytajPliki(const string& input_file_name, const string& input_file_name_2, const string& output_file_name)
 {
@@ -169,7 +177,6 @@ void CzytajPliki(const string& input_file_name, const string& input_file_name_2,
 	Publikacja.close();
 	return;
 }
-
 
 
 int main(int argc, char**argv)
