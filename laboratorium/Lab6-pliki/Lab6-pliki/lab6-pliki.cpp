@@ -12,7 +12,7 @@ using namespace std;
 						//zeby byl na dysku D to sciezka bezwzgledna "D:\\text.txt" \\ bo \ jest stosowany do specjalnych znakow np \t (tabulator)
 	/*if (!a.is_open())
 	{
-		couy << "nie mozna otworzyc pliku" << endl;
+		cout << "nie mozna otworzyc pliku" << endl;
 		exit(1);
 	}
 	a << "siema swiecie\n";*/
