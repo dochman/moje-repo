@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Opisy_bibliograficzne.txt">
+    <Text Include="Opisy_bibliograficzne.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="..\Publikacja.txt">
+    <Text Include="Publikacja.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

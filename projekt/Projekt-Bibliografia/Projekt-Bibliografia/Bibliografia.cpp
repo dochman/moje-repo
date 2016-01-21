@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 using namespace std;
 
 
@@ -87,7 +88,7 @@ void DodajPoddrzewo(SubNode*&subroot, string Etykieta, string Imie, string Nazwi
 }
 
 
-void SzukajWDrzewie(MainNode*& wsk, string tmp)
+MainNode* SzukajWDrzewie(MainNode*& wsk, string tmp)
 {
 	bool znaleziony=false;
 
@@ -97,7 +98,20 @@ void SzukajWDrzewie(MainNode*& wsk, string tmp)
 		else if (wsk->Etykieta > tmp) wsk = wsk->left;
 		else wsk = wsk->right;
 	}
-	return;
+	return wsk;
+}
+
+SubNode* SzukajWPoddrzewie(SubNode*& wsk, string tmp)
+{
+	bool znaleziony = false;
+
+	while (wsk && !znaleziony)
+	{
+		if (wsk->Etykieta == tmp) znaleziony = true;
+		else if (wsk->Etykieta > tmp) wsk = wsk->left;
+		else wsk = wsk->right;
+	}
+	return wsk;
 }
 
 void UsunGlowneDrzewo(MainNode*&root)
@@ -132,38 +146,17 @@ void NadajNumery(SubNode*&subroot, int& licznik)
 	}
 }
 
-
-
-void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode*& root)
+void WypiszPoddrzewo(SubNode* subroot, const string & Wyjsciowy_file)
 {
-	string tmp,wyraz;
-	int pos=0;
-	
+	ofstream Wyjsciowy(Wyjsciowy_file, ios::app);
 
-	ifstream Publikacja(Publikacja_file);
-	if (!Publikacja)
-	{
-		cout << "Nie mozna otworzyc pliku: " << Publikacja_file << "\n";
-		return;
-	}
+	if (!subroot) return;
+	WypiszPoddrzewo(subroot->left, Wyjsciowy_file);
+	Wyjsciowy << "[" << subroot->Numer << "] " << subroot->Imie << " " << subroot->Nazwisko << " " << subroot->Tytul << endl;
+	WypiszPoddrzewo(subroot->right, Wyjsciowy_file);
 
-	while (Publikacja >> wyraz)
-	{
-		if (wyraz[0] == '\\')
-		{
-			if (pos != string::npos)
-			{
-				pos=wyraz.find_first_of("{");
-				pos = pos + 1;
-				tmp = wyraz.substr(pos, wyraz.length()-pos-1);
-				SzukajWDrzewie(root, tmp);
-				DodajPoddrzewo(subroot, root->Etykieta, root->Imie,  root->Nazwisko,root->Tytul, 0);
-			}
-		}
-	}
-	Publikacja.close();
+	Wyjsciowy.close();
 }
-
 
 void CzytajOpisy(const string& Opisy_bibliograficzne_file, MainNode*& root)
 {
@@ -197,6 +190,96 @@ void CzytajOpisy(const string& Opisy_bibliograficzne_file, MainNode*& root)
 	return;
 }
 
+void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode*& root)
+{
+	string tmp,wyraz;
+	int pos=0;
+	MainNode* wsk = nullptr;
+	wsk = root;
+	
+
+	ifstream Publikacja(Publikacja_file);
+	if (!Publikacja)
+	{
+		cout << "Nie mozna otworzyc pliku: " << Publikacja_file << "\n";
+		return;
+	}
+
+	while (Publikacja >> wyraz)
+	{
+		if (wyraz[0] == '\\')
+		{
+			if (pos != string::npos)
+			{
+				pos=wyraz.find_first_of("{");
+				pos = pos + 1;
+				tmp = wyraz.substr(pos, wyraz.length()-pos-1);
+				SzukajWDrzewie(wsk, tmp);
+				DodajPoddrzewo(subroot, wsk->Etykieta, wsk->Imie,  wsk->Nazwisko,wsk->Tytul, 0);
+			}
+		}
+	}
+	Publikacja.close();
+}
+
+void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,SubNode*& subroot)
+{
+	ifstream Publikacja(Publikacja_file);
+	if (!Publikacja)
+	{
+		cout << "Nie mozna otworzyc pliku: " << Publikacja_file << "\n";
+		return;
+	}
+
+	ofstream Wyjsciowy(Wyjsciowy_file);
+	if (!Wyjsciowy)
+	{
+		cout << "Nie mozna otworzyc pliku: " << Wyjsciowy_file << "\n";
+		return;
+	}
+
+	int pos=0;
+	string tmp,wyraz;
+	SubNode* wsk=subroot;
+
+	while (Publikacja >> wyraz)
+	{
+		if (wyraz[0] == '\\')
+		{
+			if (pos != string::npos)
+			{
+				pos = wyraz.find_first_of("{");
+				pos = pos + 1;
+				tmp = wyraz.substr(pos, wyraz.length() - pos - 1);
+				SzukajWPoddrzewie(wsk, tmp);
+				wyraz = to_string(wsk->Numer);
+				Wyjsciowy << "[" << wyraz << "]"<<" ";
+				continue;
+			}
+		}
+		Wyjsciowy << wyraz << " ";
+	}
+
+	Publikacja.close();
+	Wyjsciowy.close();
+}
+
+void WypiszBibliografie(const string& Wyjsciowy_file, SubNode*& subroot)
+{
+	ofstream Wyjsciowy(Wyjsciowy_file, ios::app);
+	if (!Wyjsciowy)
+	{
+		cout << "Nie mozna otworzyc pliku: " << Wyjsciowy_file << "\n";
+		return;
+	}
+
+	Wyjsciowy << endl << endl << endl;
+	Wyjsciowy << "--------------------------------------------------------------------------------------" << endl;
+	Wyjsciowy << "Bibliografia" << endl;
+	WypiszPoddrzewo(subroot, Wyjsciowy_file);
+	
+	Wyjsciowy.close();
+}
 
 int main(int argc, char**argv)
 {
@@ -216,6 +299,10 @@ int main(int argc, char**argv)
 
 	int licznik = 0;
 	NadajNumery(subroot,licznik);
+
+
+	ZastapNumerami(Publikacja_file, Wyjsciowy_file, subroot);
+	WypiszBibliografie(Wyjsciowy_file, subroot);
 
 	UsunGlowneDrzewo(root);
 	UsunPoddrzewo(subroot);
