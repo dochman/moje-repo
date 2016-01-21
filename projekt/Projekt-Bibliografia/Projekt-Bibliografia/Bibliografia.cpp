@@ -9,7 +9,6 @@ struct MainNode
 	string Etykieta;
 	string Imie;
 	string Nazwisko;
-	//string Autor;
 	string Tytul;
 
 	MainNode *left, *right;
@@ -27,32 +26,32 @@ struct SubNode
 };
 
 
-bool parse_parameters(int argc, char**argv, string& input_file_name, string& input_file_name_2, string& output_file_name)
+bool parse_parameters(int argc, char**argv, string& Publikacja_file, string& Opisy_bibliograficzne_file, string& Wyjsciowy_file)
 {
-	input_file_name = "";
-	input_file_name_2 = "";
-	output_file_name = "";
-	const string input_switch = "-t";
-	const string input_switch_2 = "-b";
-	const string output_switch = "-o";
+	Publikacja_file = "";
+	Opisy_bibliograficzne_file = "";
+	Wyjsciowy_file = "";
+	const string Publikacja_switch = "-t";
+	const string Opisy_switch = "-b";
+	const string Wyjsciowy_switch = "-o";
 
 	for (int i = 1; i < argc - 1; ++i)
 	{
-		if (argv[i] == input_switch)
+		if (argv[i] == Publikacja_switch)
 		{
-			input_file_name = argv[++i];
+			Publikacja_file = argv[++i];
 		}
-		else if (argv[i] == input_switch_2)
+		else if (argv[i] == Opisy_switch)
 		{
-			input_file_name_2 = argv[++i];
+			Opisy_bibliograficzne_file = argv[++i];
 		}
-		else if (argv[i] == output_switch)
+		else if (argv[i] == Wyjsciowy_switch)
 		{
-			output_file_name = argv[++i];
+			Wyjsciowy_file = argv[++i];
 		}
 	}
 
-	if (input_file_name == "" || input_file_name_2 == "" || output_file_name == "")
+	if (Publikacja_file == "" || Opisy_bibliograficzne_file == "" || Wyjsciowy_file == "")
 	{
 		return false;
 	}
@@ -71,125 +70,153 @@ void help()
 }
 
 
-void MainAddRecursive(MainNode*&root, string Etykieta, string Imie, string Nazwisko, string Tytul)
+void DodajGlowneDrzewo(MainNode*&root, string Etykieta, string Imie, string Nazwisko, string Tytul)
 {
 	if (!root)
 		root = new MainNode{ Etykieta, Imie, Nazwisko, Tytul,nullptr,nullptr };
-	else if (Etykieta < root->Etykieta) MainAddRecursive(root->left, Etykieta, Imie, Nazwisko, Tytul);
-	else MainAddRecursive(root->right, Etykieta, Imie, Nazwisko, Tytul);
+	else if (Etykieta < root->Etykieta) DodajGlowneDrzewo(root->left, Etykieta, Imie, Nazwisko, Tytul);
+	else DodajGlowneDrzewo(root->right, Etykieta, Imie, Nazwisko, Tytul);
 }
 
-void SubAddRecursive(SubNode*&subroot, string Etykieta, string Imie, string Nazwisko, string Tytul, int Numer)
+void DodajPoddrzewo(SubNode*&subroot, string Etykieta, string Imie, string Nazwisko, string Tytul, int Numer)
 {
 	if (!subroot)
 		subroot = new SubNode{ Etykieta, Imie, Nazwisko, Tytul, 0, nullptr, nullptr };
-	else if (Nazwisko < subroot->Nazwisko) SubAddRecursive(subroot->left, Etykieta, Imie, Nazwisko, Tytul, Numer);
-	else SubAddRecursive(subroot->right, Etykieta, Imie, Nazwisko, Tytul, Numer);
+	else if (Nazwisko < subroot->Nazwisko) DodajPoddrzewo(subroot->left, Etykieta, Imie, Nazwisko, Tytul, Numer);
+	else DodajPoddrzewo(subroot->right, Etykieta, Imie, Nazwisko, Tytul, Numer);
 }
 
-/*void DeleteMainTree(MainNode*&root)
-{
-if (!root) return;
-DeleteMainTree(root->left);
-DeleteMainTree(root->right);
-delete root;
-root = nullptr;
-}*/
 
-
-void NadajNumery(SubNode* subroot)
+void SzukajWDrzewie(MainNode*& wsk, string tmp)
 {
-	if (!subroot) return;
-	NadajNumery(subroot->left);
-	subroot->Numer++;
-	NadajNumery(subroot->right);
+	bool znaleziony=false;
+
+	while (wsk && !znaleziony)
+	{
+		if (wsk->Etykieta == tmp) znaleziony = true;
+		else if (wsk->Etykieta > tmp) wsk = wsk->left;
+		else wsk = wsk->right;
+	}
 	return;
 }
 
-void Przejdz(MainNode* root)
+void UsunGlowneDrzewo(MainNode*&root)
 {
 	if (!root) return;
-	Przejdz(root->left);
-	Przejdz(root->right);
-
-	return;
+	UsunGlowneDrzewo(root->left);
+	UsunGlowneDrzewo(root->right);
+	delete root;
+	root = nullptr;
 }
 
-void CzytajPliki(const string& input_file_name, const string& input_file_name_2, const string& output_file_name)
+void UsunPoddrzewo(SubNode*&subroot)
+{
+	if (!subroot) return;
+	UsunPoddrzewo(subroot->left);
+	UsunPoddrzewo(subroot->right);
+	delete subroot;
+	subroot = nullptr;
+}
+
+
+void NadajNumery(SubNode*&subroot, int& licznik)
+{
+	if (!subroot) return;
+	else
+	{
+		NadajNumery(subroot->left, licznik);
+		licznik = licznik + 1;
+		subroot->Numer = licznik;
+		NadajNumery(subroot->right, licznik);
+		return;
+	}
+}
+
+
+
+void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode*& root)
+{
+	string tmp,wyraz;
+	int pos=0;
+	
+
+	ifstream Publikacja(Publikacja_file);
+	if (!Publikacja)
+	{
+		cout << "Nie mozna otworzyc pliku: " << Publikacja_file << "\n";
+		return;
+	}
+
+	while (Publikacja >> wyraz)
+	{
+		if (wyraz[0] == '\\')
+		{
+			if (pos != string::npos)
+			{
+				pos=wyraz.find_first_of("{");
+				pos = pos + 1;
+				tmp = wyraz.substr(pos, wyraz.length()-pos-1);
+				SzukajWDrzewie(root, tmp);
+				DodajPoddrzewo(subroot, root->Etykieta, root->Imie,  root->Nazwisko,root->Tytul, 0);
+			}
+		}
+	}
+	Publikacja.close();
+}
+
+
+void CzytajOpisy(const string& Opisy_bibliograficzne_file, MainNode*& root)
 {
 	string Etykieta;
 	string Imie;
 	string Nazwisko;
 	string Tytul;
-	string Autor;
 	string zbedna_linia;
 	string wyraz;
-	int dl;
 
-	ifstream OpisyBibliograficzne(input_file_name_2);
+	ifstream OpisyBibliograficzne(Opisy_bibliograficzne_file);
 	if (!OpisyBibliograficzne)
 	{
-		cout << "Nie mozna otworzyc pliku: " << input_file_name_2 << "\n";
+		cout << "Nie mozna otworzyc pliku: " << Opisy_bibliograficzne_file << "\n";
 		return;
 	}
-
-	ifstream Publikacja(input_file_name);
-	if (!Publikacja)
-	{
-		cout << "Nie mozna otworzyc pliku: " << input_file_name << "\n";
-		return;
-	}
-
-
-	MainNode* root = nullptr;
-	SubNode* subroot = nullptr;
 
 	while (!OpisyBibliograficzne.eof())
 	{
 		getline(OpisyBibliograficzne, Etykieta);
-		getline(OpisyBibliograficzne, Autor);
+		OpisyBibliograficzne >> Imie;
+		OpisyBibliograficzne >> Nazwisko;
+		getline(OpisyBibliograficzne, zbedna_linia);
 		getline(OpisyBibliograficzne, Tytul);
 		getline(OpisyBibliograficzne, zbedna_linia);
 
-		dl = Autor.length();
-		for (int i = 0; i < dl; i++)
-		{
-			if (Autor[i] == ' ')
-			{
-				Imie = Autor.substr(0, i);
-				Nazwisko = Autor.substr(i + 1, dl);
-				break;
-			}
-		}
-		MainAddRecursive(root, Etykieta, Imie, Nazwisko, Tytul);
-	}
-
-	while (Publikacja >> wyraz)
-	{
-		if (wyraz[0] == '\\' && wyraz == "\\cite{" + root->Etykieta + "}")
-		{
-			SubAddRecursive(subroot, root->Etykieta, root->Imie, root->Nazwisko, root->Tytul, 0);
-		}
+		DodajGlowneDrzewo(root, Etykieta, Imie, Nazwisko, Tytul);
 	}
 
 	OpisyBibliograficzne.close();
-	Publikacja.close();
 	return;
 }
 
 
 int main(int argc, char**argv)
 {
-	string input_file_name, input_file_name_2, output_file_name;
-	if (!parse_parameters(argc, argv, input_file_name, input_file_name_2, output_file_name))
+	string Publikacja_file, Opisy_bibliograficzne_file, Wyjsciowy_file;
+	if (!parse_parameters(argc, argv, Publikacja_file, Opisy_bibliograficzne_file, Wyjsciowy_file))
 	{
 		cout << "Podane zostaly bledne parametry, zastosuj sie do pomocy wyswietlonej ponizej:\n";
 		help();
 		return 1;
 	}
 
-	CzytajPliki(input_file_name, input_file_name_2, output_file_name);
+	MainNode* root = nullptr;
+	SubNode* subroot = nullptr;
 
-	//DeleteMainTree(root);
+	CzytajOpisy(Opisy_bibliograficzne_file, root);
+	CzytajPublikacje(Publikacja_file, subroot, root);
 
+	int licznik = 0;
+	NadajNumery(subroot,licznik);
+
+	UsunGlowneDrzewo(root);
+	UsunPoddrzewo(subroot);
 }
