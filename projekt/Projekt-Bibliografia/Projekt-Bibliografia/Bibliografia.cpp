@@ -2,6 +2,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+
+//#include Operacje_na_plikach.h
+//#include Operacje_na_drzewach.h
+//#include Parametry.h
 using namespace std;
 
 
@@ -27,7 +31,7 @@ struct SubNode
 };
 
 
-bool parse_parameters(int argc, char**argv, string& Publikacja_file, string& Opisy_bibliograficzne_file, string& Wyjsciowy_file)
+bool Parsuj_parametry(int argc, char**argv, string& Publikacja_file, string& Opisy_bibliograficzne_file, string& Wyjsciowy_file)
 {
 	Publikacja_file = "";
 	Opisy_bibliograficzne_file = "";
@@ -60,7 +64,7 @@ bool parse_parameters(int argc, char**argv, string& Publikacja_file, string& Opi
 }
 
 
-void help()
+void Pomoc()
 {
 	cout << "Program Bibliografia" << endl;
 	cout << "Aby poprawnie uzywac programu nalezy przy wywolywaniu podac nazwe programu oraz trzy glowne parametry:" << endl;
@@ -78,6 +82,7 @@ void DodajGlowneDrzewo(MainNode*&root, string Etykieta, string Imie, string Nazw
 	else if (Etykieta < root->Etykieta) DodajGlowneDrzewo(root->left, Etykieta, Imie, Nazwisko, Tytul);
 	else DodajGlowneDrzewo(root->right, Etykieta, Imie, Nazwisko, Tytul);
 }
+
 
 void DodajPoddrzewo(SubNode*&subroot, string Etykieta, string Imie, string Nazwisko, string Tytul, int Numer)
 {
@@ -101,6 +106,7 @@ MainNode* SzukajWDrzewie(MainNode*& wsk, string tmp)
 	return wsk;
 }
 
+
 SubNode* SzukajWPoddrzewie(SubNode*& wsk, string tmp)
 {
 	bool znaleziony = false;
@@ -114,6 +120,7 @@ SubNode* SzukajWPoddrzewie(SubNode*& wsk, string tmp)
 	return wsk;
 }
 
+
 void UsunGlowneDrzewo(MainNode*&root)
 {
 	if (!root) return;
@@ -122,6 +129,7 @@ void UsunGlowneDrzewo(MainNode*&root)
 	delete root;
 	root = nullptr;
 }
+
 
 void UsunPoddrzewo(SubNode*&subroot)
 {
@@ -146,6 +154,7 @@ void NadajNumery(SubNode*&subroot, int& licznik)
 	}
 }
 
+
 void WypiszPoddrzewo(SubNode* subroot, const string & Wyjsciowy_file)
 {
 	ofstream Wyjsciowy(Wyjsciowy_file, ios::app);
@@ -157,6 +166,7 @@ void WypiszPoddrzewo(SubNode* subroot, const string & Wyjsciowy_file)
 
 	Wyjsciowy.close();
 }
+
 
 void CzytajOpisy(const string& Opisy_bibliograficzne_file, MainNode*& root)
 {
@@ -190,10 +200,12 @@ void CzytajOpisy(const string& Opisy_bibliograficzne_file, MainNode*& root)
 	return;
 }
 
+
 void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode*& root)
 {
-	string tmp,wyraz;
+	string tmp,wyraz,linia;
 	int pos=0;
+	int pos2 = 0;
 	MainNode* wsk = nullptr;
 	wsk = root;
 	
@@ -205,22 +217,24 @@ void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode
 		return;
 	}
 
-	while (Publikacja >> wyraz)
+	while (getline(Publikacja, linia))
 	{
-		if (wyraz[0] == '\\')
+		while (linia.find("\\cite") != string::npos)
 		{
-			if (pos != string::npos)
-			{
-				pos=wyraz.find_first_of("{");
-				pos = pos + 1;
-				tmp = wyraz.substr(pos, wyraz.length()-pos-1);
-				SzukajWDrzewie(wsk, tmp);
-				DodajPoddrzewo(subroot, wsk->Etykieta, wsk->Imie,  wsk->Nazwisko,wsk->Tytul, 0);
-			}
+			pos = linia.find_first_of("{");
+			pos = pos + 1;
+			pos2 = linia.find_first_of("}");
+			tmp = linia.substr(pos, pos2 - pos);
+			SzukajWDrzewie(wsk, tmp);
+			linia.replace(linia.begin() + linia.find_first_of("\\"), linia.begin() + linia.find_first_of("}") + 1, "[]");
+			DodajPoddrzewo(subroot, wsk->Etykieta, wsk->Imie, wsk->Nazwisko, wsk->Tytul, 0);
+			continue;
 		}
 	}
+
 	Publikacja.close();
 }
+
 
 void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,SubNode*& subroot)
 {
@@ -238,31 +252,29 @@ void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,
 		return;
 	}
 
-	int pos=0;
-	string tmp,wyraz;
+	int pos = 0;
+	int pos2 = 0;
+	string tmp,wyraz,linia;
 	SubNode* wsk=subroot;
 
-	while (Publikacja >> wyraz)
+	while (getline(Publikacja, linia))
 	{
-		if (wyraz[0] == '\\')
+		while (linia.find("\\cite") != string::npos)
 		{
-			if (pos != string::npos)
-			{
-				pos = wyraz.find_first_of("{");
-				pos = pos + 1;
-				tmp = wyraz.substr(pos, wyraz.length() - pos - 1);
-				SzukajWPoddrzewie(wsk, tmp);
-				wyraz = to_string(wsk->Numer);
-				Wyjsciowy << "[" << wyraz << "]"<<" ";
-				continue;
-			}
+			pos = linia.find_first_of("{");
+			pos = pos + 1;
+			pos2 = linia.find_first_of("}");
+			tmp = linia.substr(pos, pos2-pos);
+			SzukajWPoddrzewie(wsk, tmp);
+			linia.replace(linia.begin() + linia.find_first_of("\\"), linia.begin() + linia.find_first_of("}")+1, "[" + to_string(wsk->Numer) + "]");
 		}
-		Wyjsciowy << wyraz << " ";
+		Wyjsciowy << linia;
 	}
-
+		
 	Publikacja.close();
 	Wyjsciowy.close();
 }
+
 
 void WypiszBibliografie(const string& Wyjsciowy_file, SubNode*& subroot)
 {
@@ -284,10 +296,10 @@ void WypiszBibliografie(const string& Wyjsciowy_file, SubNode*& subroot)
 int main(int argc, char**argv)
 {
 	string Publikacja_file, Opisy_bibliograficzne_file, Wyjsciowy_file;
-	if (!parse_parameters(argc, argv, Publikacja_file, Opisy_bibliograficzne_file, Wyjsciowy_file))
+	if (!Parsuj_parametry(argc, argv, Publikacja_file, Opisy_bibliograficzne_file, Wyjsciowy_file))
 	{
 		cout << "Podane zostaly bledne parametry, zastosuj sie do pomocy wyswietlonej ponizej:\n";
-		help();
+		Pomoc();
 		return 1;
 	}
 
