@@ -110,14 +110,15 @@ MainNode* SzukajWDrzewie(MainNode*& wsk, string tmp)
 SubNode* SzukajWPoddrzewie(SubNode*& wsk, string tmp)
 {
 	bool znaleziony = false;
+	auto temp = wsk;
 
-	while (wsk && !znaleziony)
+	while (temp && !znaleziony)
 	{
-		if (wsk->Etykieta == tmp) znaleziony = true;
-		else if (wsk->Etykieta > tmp) wsk = wsk->left;
-		else wsk = wsk->right;
+		if (temp->Nazwisko == tmp) znaleziony = true;
+		else if (temp->Nazwisko > tmp) temp = temp->left;
+		else temp = temp->right;
 	}
-	return wsk;
+	return temp;
 }
 
 
@@ -207,7 +208,6 @@ void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode
 	int pos=0;
 	int pos2 = 0;
 	MainNode* wsk = nullptr;
-	wsk = root;
 	
 
 	ifstream Publikacja(Publikacja_file);
@@ -225,6 +225,7 @@ void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode
 			pos = pos + 1;
 			pos2 = linia.find_first_of("}");
 			tmp = linia.substr(pos, pos2 - pos);
+			wsk = root;
 			SzukajWDrzewie(wsk, tmp);
 			linia.replace(linia.begin() + linia.find_first_of("\\"), linia.begin() + linia.find_first_of("}") + 1, "[]");
 			DodajPoddrzewo(subroot, wsk->Etykieta, wsk->Imie, wsk->Nazwisko, wsk->Tytul, 0);
@@ -236,7 +237,7 @@ void CzytajPublikacje(const string& Publikacja_file, SubNode*& subroot, MainNode
 }
 
 
-void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,SubNode*& subroot)
+void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,SubNode*& subroot, MainNode*& root)
 {
 	ifstream Publikacja(Publikacja_file);
 	if (!Publikacja)
@@ -255,7 +256,9 @@ void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,
 	int pos = 0;
 	int pos2 = 0;
 	string tmp,wyraz,linia;
-	SubNode* wsk=subroot;
+	MainNode* wsk=nullptr;
+	MainNode* wsk_dodatkowy = nullptr;
+	SubNode* wskaznik = nullptr;
 
 	while (getline(Publikacja, linia))
 	{
@@ -265,10 +268,14 @@ void ZastapNumerami(const string& Publikacja_file, const string& Wyjsciowy_file,
 			pos = pos + 1;
 			pos2 = linia.find_first_of("}");
 			tmp = linia.substr(pos, pos2-pos);
-			SzukajWPoddrzewie(wsk, tmp);
-			linia.replace(linia.begin() + linia.find_first_of("\\"), linia.begin() + linia.find_first_of("}")+1, "[" + to_string(wsk->Numer) + "]");
+			wsk = root;
+			wskaznik = subroot;
+			wsk_dodatkowy=SzukajWDrzewie(wsk, tmp);
+			tmp = wsk_dodatkowy->Nazwisko;
+			wskaznik=SzukajWPoddrzewie(wskaznik, tmp);
+			linia.replace(linia.begin() + linia.find_first_of("\\"), linia.begin() + linia.find_first_of("}")+1, "[" + to_string(wskaznik->Numer) + "]");
 		}
-		Wyjsciowy << linia;
+		Wyjsciowy << linia << endl;
 	}
 		
 	Publikacja.close();
@@ -313,7 +320,7 @@ int main(int argc, char**argv)
 	NadajNumery(subroot,licznik);
 
 
-	ZastapNumerami(Publikacja_file, Wyjsciowy_file, subroot);
+	ZastapNumerami(Publikacja_file, Wyjsciowy_file, subroot, root);
 	WypiszBibliografie(Wyjsciowy_file, subroot);
 
 	UsunGlowneDrzewo(root);

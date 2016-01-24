@@ -1,7 +1,26 @@
-W dziele [2] autor przedstawia sytuacjê Danii [1].
+W dziele [6] autor przedstawia sytuacjê Danii [2]. Od samego powstania Hamlet jest jednym z najczêœciej granych utworów teatralnych, 
+a rola Hamleta – ze wzglêdu na objêtoœæ tekstu, du¿¹ ekspresjê i bogat¹ osobowoœæ postaci – uwa¿ana jest za sprawdzian dojrza³oœci i umiejêtnoœci aktorskich. 
+Z Hamleta pochodzi zapewne najpopularniejszy monolog, zaczynaj¹cy siê od s³ów Byæ albo nie byæ.
+
+[3] to niezwyk³a ksi¹¿ka o matematyce. Autorzy, wybitni matematycy informatyczni, dostrzegli lukê na rynku wydawniczym - brak pozycji,w której by³yby zebrane treœci 
+matematyczne potrzebne informatykowi. Chodzi³o o wy³o¿enie metod rozwi¹zywania skomplikowanych problemów, wyliczania ogromnych 
+sum i dostrzegania subtelnych wzorców w otaczaj¹cym nas œwiecie. Umiejêtnoœci te potrzebne s¹ przy konstruowaniu i analizowaniu algorytmów komputerowych.
+
+[1] to powieœæ dla m³odzie¿y z gatunku science-fiction napisana przez Suzanne Collins, która wraz z [4] skrad³a serca m³odym czytelnikom. 
+Ukaza³a siê 14 wrzeœnia 2008 w Stanach Zjednoczonych. W Polsce zosta³a wydana 6 maja 2009 roku przez wydawnictwo Media Rodzina. Ksi¹¿ka jest pierwsz¹ z trzech 
+czêœci serii o tym samym tytule, druga czêœæ – W Pierœcieniu Ognia ukaza³a siê w Stanach Zjednoczonych 1 wrzeœnia 2009 roku (w Polsce 12 listopada 2009). 
+Trzecia czêœæ Kosog³os mia³a premierê w Stanach Zjednoczonych 24 sierpnia 2010, natomiast w Polsce ukaza³a siê 10 listopada 2010 roku.
+
+[5] - opowiadanie Andrzeja Sapkowskiego z serii o wiedŸminie ze zbioru Miecz przeznaczenia. W¹tki z tego opowiadania zosta³y 
+wykorzystane w odcinkach 3 i 11 serialu WiedŸmin Marka Brodzkiego.
+
 
 
 --------------------------------------------------------------------------------------
 Bibliografia
-[1] Jan Florjanowicz Rocznik Statystyczny 2011
-[2] William Shakespeare Hamlet
+[1] Suzanne Collins Igrzyska Œmierci
+[2] Jan Florjanowicz Rocznik Statystyczny 2011
+[3] Robert Graham Matematyka konkretna
+[4] Dashner James Wiêzieñ labiryntu
+[5] Andrzej Sapkowski Miecz Przeznaczenia
+[6] William Shakespeare Hamlet

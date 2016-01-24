@@ -152,6 +152,9 @@
     <Text Include="Opisy_bibliograficzne.txt" />
     <Text Include="Publikacja.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Projekt Sprawozdanie - Daniel Ochman.pdf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
