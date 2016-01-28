@@ -18,6 +18,18 @@
     <ClCompile Include="Bibliografia.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Parametry.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pomoc.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Operacjepliki.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Operacjedrzewa.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Opisy_bibliograficzne.txt">
@@ -28,7 +40,21 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Projekt Sprawozdanie - Daniel Ochman.pdf">
+    <ClInclude Include="Parametry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pomoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Operacjepliki.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Operacjedrzewa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="doc\Projekt Sprawozdanie - Daniel Ochman.pdf">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

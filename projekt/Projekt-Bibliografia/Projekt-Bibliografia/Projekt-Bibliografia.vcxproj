@@ -147,13 +147,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bibliografia.cpp" />
+    <ClCompile Include="Operacjedrzewa.cpp" />
+    <ClCompile Include="Operacjepliki.cpp" />
+    <ClCompile Include="Parametry.cpp" />
+    <ClCompile Include="Pomoc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Opisy_bibliograficzne.txt" />
     <Text Include="Publikacja.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Projekt Sprawozdanie - Daniel Ochman.pdf" />
+    <ClInclude Include="Operacjedrzewa.h" />
+    <ClInclude Include="Operacjepliki.h" />
+    <ClInclude Include="Parametry.h" />
+    <ClInclude Include="Pomoc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="doc\Projekt Sprawozdanie - Daniel Ochman.pdf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
